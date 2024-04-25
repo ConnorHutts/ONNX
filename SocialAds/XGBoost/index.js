@@ -1,32 +1,25 @@
+// Function to run inference
 async function runExample() {
+    // Load the ONNX model
+    const session = await ort.InferenceSession.create();
+    await session.loadModel('./xgboost_Ads_ort.onnx');
 
-    var x = new Float32Array( 1, 2 )
+    // Retrieve input values from the HTML input elements
+    const x1 = parseFloat(document.getElementById('box1').value);
+    const x2 = parseFloat(document.getElementById('box2').value);
 
-    var x = [];
+    // Prepare input tensor for inference
+    const inputTensor = new ort.Tensor(new Float32Array([x1, x2]), [1, 2]);
 
-     x[0] = document.getElementById('box1').value;
-     x[10] = document.getElementById('box2').value;
+    try {
+        // Run inference with input tensor
+        const output = await session.run({ 'X': inputTensor });
 
-    let tensorX = new ort.Tensor('float32', x, [1, 11] );
-    let feeds = {float_input: tensorX};
-
-    let session = await ort.InferenceSession.create('xgboost_Ads_ort.onnx');
-    
-   let result = await session.run(feeds);
-   let outputData = result.variable.data;
-
-  outputData = parseFloat(outputData).toFixed(2)
-
-   let predictions = document.getElementById('predictions');
-
-  predictions.innerHTML = ` <hr> Got an output tensor with values: <br/>
-   <table>
-     <tr>
-       <td>  Ad Purchases  </td>
-       <td id="td0">  ${outputData}  </td>
-     </tr>
-  </table>`;
-    
-
-
+        // Display inference result
+        const prediction = output['Y'].data[0]; // Assuming 'Y' is the output node name
+        const predictionsElement = document.getElementById('predictions');
+        predictionsElement.innerHTML = `<p>Model prediction: ${prediction}</p>`;
+    } catch (error) {
+        console.error('Error running inference:', error);
+    }
 }
