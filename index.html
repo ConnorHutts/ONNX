@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Fruit Generator</title>
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css">
+    <style>
+        /* Add your custom CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        #output {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Fruit Generator</h1>
+        <div class="form-group">
+            <label for="colorInput">Color:</label>
+            <input type="text" id="colorInput" value="0" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="shapeInput">Shape:</label>
+            <input type="text" id="shapeInput" value="0" class="form-control">
+        </div>
+        <button onclick="generateImage()" class="btn-primary">Generate Image</button>
+        <div id="output"></div>
+    </div>
+
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+    <script>
+        function generateImage() {
+            // Retrieve values from input fields
+            const color = parseFloat(document.getElementById('colorInput').value);
+            const shape = parseFloat(document.getElementById('shapeInput').value);
+
+            // Display conditions for debugging
+            const conditionsText = `Color: ${color}, Shape: ${shape}`;
+            document.getElementById('output').innerText = `Conditions: ${conditionsText}`;
+
+            // Call Python function using PyScript
+            pyodide.runPython(`
+                import matplotlib.pyplot as plt
+                import numpy as np
+
+                # Define a function to generate an image based on conditions
+                def generate_image(color, shape):
+                    # Dummy code to generate an image (replace with your logic)
+                    np.random.seed(0)
+                    image_data = np.random.rand(100, 100)
+
+                    plt.imshow(image_data, cmap='viridis')
+                    plt.title(f'Color: {color}, Shape: {shape}')
+                    plt.axis('off')  # Turn off axis
+                    plt.colorbar(label='Color Intensity')
+                    plt.show()
+
+                # Call the function with provided conditions
+                generate_image(${color}, ${shape})
+            `);
+        }
+    </script>
+</body>
+
+</html>
